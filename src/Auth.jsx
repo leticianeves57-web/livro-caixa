@@ -55,7 +55,7 @@ export default function Auth() {
   return (
     <div className="auth-wrap">
       <div className="auth-card">
-        <div className="auth-brand">Livro<span>·</span>Caixa</div>
+        <div className="auth-brand">Sistema Financeiro</div>
         <div className="auth-sub">
           {mode === "login" && "Entre na sua conta"}
           {mode === "signup" && "Crie sua conta"}
@@ -103,3 +103,4 @@ export default function Auth() {
     </div>
   );
 }
+
