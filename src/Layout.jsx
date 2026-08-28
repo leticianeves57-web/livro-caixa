@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { LayoutDashboard, ArrowLeftRight, Receipt, Activity, TrendingUp, PiggyBank, CreditCard, ShoppingBag, Settings, LogOut } from "lucide-react";
+import { LayoutDashboard, ArrowLeftRight, Receipt, Activity, TrendingUp, PiggyBank, CreditCard, ShoppingBag, Settings, LogOut, MoreHorizontal } from "lucide-react";
 import { supabase } from "./lib/supabaseClient";
 import DashboardPage from "./pages/DashboardPage";
 import MovimentacoesPage from "./pages/MovimentacoesPage";
@@ -25,6 +25,7 @@ const NAV_ITEMS = [
 
 export default function Layout({ session }) {
   const [activePage, setActivePage] = useState("dashboard");
+  const [showMore, setShowMore] = useState(false);
   const [loading, setLoading] = useState(true);
   const [transactions, setTransactions] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -67,7 +68,7 @@ export default function Layout({ session }) {
 
   const pageProps = {
     session, transactions, categories, paymentMethods, investments, investmentTypes, reserveMovements, settings,
-    installmentPlans, shoppingList,
+    installmentPlans, shoppingList, setActivePage,
     reloadTransactions: async () => {
       const { data } = await supabase.from("transactions").select("*").order("date", { ascending: false });
       setTransactions(data || []);
@@ -157,16 +158,40 @@ export default function Layout({ session }) {
       </main>
 
       <nav className="shell-bottomnav">
-        {NAV_ITEMS.map((item) => {
+        {NAV_ITEMS.slice(0, 4).map((item) => {
           const Icon = item.icon;
           return (
-            <button key={item.id} className={activePage === item.id ? "active" : ""} onClick={() => setActivePage(item.id)}>
+            <button key={item.id} className={activePage === item.id ? "active" : ""} onClick={() => { setActivePage(item.id); setShowMore(false); }}>
               <Icon size={18} />
-              <span>{item.label}</span>
+              <span>{item.label.split(" ")[0]}</span>
             </button>
           );
         })}
+        <button className={showMore ? "active" : ""} onClick={() => setShowMore(true)}>
+          <MoreHorizontal size={18} />
+          <span>Mais</span>
+        </button>
       </nav>
+
+      {showMore && (
+        <div className="more-overlay" onClick={() => setShowMore(false)}>
+          <div className="more-sheet" onClick={(e) => e.stopPropagation()}>
+            <div className="more-handle" />
+            {NAV_ITEMS.slice(4).map((item) => {
+              const Icon = item.icon;
+              return (
+                <button key={item.id} className="more-item" onClick={() => { setActivePage(item.id); setShowMore(false); }}>
+                  <Icon size={17} /> {item.label}
+                </button>
+              );
+            })}
+            <div className="more-divider" />
+            <button className="more-item" onClick={() => supabase.auth.signOut()}>
+              <LogOut size={17} /> Sair
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
