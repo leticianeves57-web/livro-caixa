@@ -1,13 +1,15 @@
 import { useEffect, useState } from "react";
-import { LayoutDashboard, ArrowLeftRight, Receipt, Settings, LogOut } from "lucide-react";
+import { LayoutDashboard, ArrowLeftRight, Receipt, Activity, Settings, LogOut } from "lucide-react";
 import { supabase } from "./lib/supabaseClient";
 import DashboardPage from "./pages/DashboardPage";
 import MovimentacoesPage from "./pages/MovimentacoesPage";
 import GastosPage from "./pages/GastosPage";
+import SaudeFinanceiraPage from "./pages/SaudeFinanceiraPage";
 import ConfiguracoesPage from "./pages/ConfiguracoesPage";
 
 const NAV_ITEMS = [
   { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
+  { id: "saude", label: "Saúde Financeira", icon: Activity },
   { id: "movimentacoes", label: "Movimentações", icon: ArrowLeftRight },
   { id: "gastos", label: "Gastos", icon: Receipt },
   { id: "configuracoes", label: "Configurações", icon: Settings },
@@ -84,6 +86,8 @@ export default function Layout({ session }) {
           <p className="empty-note">Carregando…</p>
         ) : activePage === "dashboard" ? (
           <DashboardPage {...pageProps} />
+        ) : activePage === "saude" ? (
+          <SaudeFinanceiraPage {...pageProps} />
         ) : activePage === "movimentacoes" ? (
           <MovimentacoesPage {...pageProps} />
         ) : activePage === "gastos" ? (

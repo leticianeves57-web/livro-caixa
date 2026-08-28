@@ -164,12 +164,40 @@ body { margin: 0; font-family: 'IBM Plex Sans', sans-serif; background: var(--pa
 .checkbox-label input { width: auto; }
 .form-error { font-size: 12.5px; color: var(--bad); background: rgba(176,69,58,0.08); border: 1px solid rgba(176,69,58,0.25); border-radius: 6px; padding: 8px 10px; margin: 4px 0 10px 0; }
 
+/* ---- Saúde Financeira ---- */
+.health-card { display: flex; gap: 24px; align-items: center; }
+.health-gauge { position: relative; flex-shrink: 0; width: 120px; height: 120px; }
+.health-gauge-center { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.factors-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 20px; }
+.factor-bar { height: 6px; background: var(--paper); border-radius: 4px; overflow: hidden; }
+.factor-bar div { height: 100%; border-radius: 4px; }
+
+.legend { display: flex; flex-direction: column; gap: 7px; margin-top: 10px; }
+.legend-item { display: flex; align-items: center; gap: 8px; font-size: 12.5px; }
+.legend-item .dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+.legend-item b { margin-left: auto; font-weight: 500; }
+.dot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
+
+.class-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.class-card { border: 1px solid var(--line); border-radius: 8px; padding: 14px; }
+
+.alert-row { display: flex; align-items: flex-start; gap: 10px; padding: 10px 0; border-bottom: 1px dotted var(--line); font-size: 13.5px; line-height: 1.4; }
+.alert-row:last-child { border-bottom: none; }
+.alert-row svg { flex-shrink: 0; margin-top: 1px; }
+.alert-row.tone-critico svg { color: var(--bad); }
+.alert-row.tone-atencao svg { color: var(--warn); }
+.alert-row.tone-info svg { color: var(--muted); }
+.alert-row.tone-positivo svg { color: var(--ok); }
+
 @media (max-width: 760px) {
   .shell-sidebar { display: none; }
   .shell-main { padding: 18px 16px 90px 16px; max-width: 100%; }
   .mini-cards { grid-template-columns: 1fr; }
   .field-row { grid-template-columns: 1fr; }
   .quick-buttons { grid-template-columns: 1fr; }
+  .health-card { flex-direction: column; text-align: center; }
+  .factors-grid { grid-template-columns: 1fr; }
+  .class-grid { grid-template-columns: 1fr 1fr; }
   .shell-bottomnav {
     display: flex; position: fixed; bottom: 0; left: 0; right: 0; background: var(--ink);
     padding: 8px 4px calc(8px + env(safe-area-inset-bottom, 0px)) 4px; justify-content: space-around; z-index: 40;

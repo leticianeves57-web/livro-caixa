@@ -12,6 +12,7 @@ export default function TransactionForm({ categories, paymentMethods, initialDat
   const [date, setDate] = useState(initialData?.date || todayStr());
   const [paymentMethod, setPaymentMethod] = useState(initialData?.payment_method || paymentMethods[0]?.name || "");
   const [fixed, setFixed] = useState(initialData?.fixed || false);
+  const [classification, setClassification] = useState(initialData?.classification || "essencial");
   const [paid, setPaid] = useState(initialData ? initialData.paid !== false : true);
   const [note, setNote] = useState(initialData?.note || "");
   const [error, setError] = useState("");
@@ -29,6 +30,7 @@ export default function TransactionForm({ categories, paymentMethods, initialDat
     const payload = {
       type, description: description.trim(), category, amount: val, date,
       payment_method: paymentMethod, fixed, paid, note: note.trim(),
+      classification: type === "saida" ? classification : null,
     };
     const { error: err } = editMode
       ? await supabase.from("transactions").update(payload).eq("id", initialData.id)
@@ -84,6 +86,17 @@ export default function TransactionForm({ categories, paymentMethods, initialDat
               É uma conta ou entrada fixa
             </label>
           </div>
+          {type === "saida" && (
+            <div className="field">
+              <label>Classificação do gasto</label>
+              <select value={classification} onChange={(e) => setClassification(e.target.value)}>
+                <option value="essencial">Essencial</option>
+                <option value="importante">Importante</option>
+                <option value="nao-essencial">Não essencial</option>
+                <option value="evitavel">Evitável</option>
+              </select>
+            </div>
+          )}
           <div className="field">
             <label className="checkbox-label">
               <input type="checkbox" checked={paid} onChange={(e) => setPaid(e.target.checked)} />
