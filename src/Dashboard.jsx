@@ -36,7 +36,7 @@ export default function Dashboard({ session }) {
   return (
     <div>
       <div className="app-header">
-        <h1>Livro-Caixa</h1>
+        <h1>Sistema Financeiro</h1>
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
           <span style={{ fontSize: 13, color: "var(--muted)" }}>{session.user.email}</span>
           <button className="btn-logout" onClick={() => supabase.auth.signOut()}>
@@ -154,3 +154,4 @@ function QuickForm({ onClose, onSaved }) {
     </div>
   );
 }
+
