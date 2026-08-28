@@ -188,6 +188,7 @@ body { margin: 0; font-family: 'IBM Plex Sans', sans-serif; background: var(--pa
 .alert-row.tone-atencao svg { color: var(--warn); }
 .alert-row.tone-info svg { color: var(--muted); }
 .alert-row.tone-positivo svg { color: var(--ok); }
+.status-select { font-size: 10px; text-transform: uppercase; border: 1px solid var(--line); border-radius: 20px; padding: 2px 8px; background: #fff; cursor: pointer; }
 @media (max-width: 760px) {
   .shell-sidebar { display: none; }
   .shell-main { padding: 18px 16px 90px 16px; max-width: 100%; }

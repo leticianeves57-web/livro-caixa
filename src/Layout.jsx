@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { LayoutDashboard, ArrowLeftRight, Receipt, Activity, TrendingUp, PiggyBank, Settings, LogOut } from "lucide-react";
+import { LayoutDashboard, ArrowLeftRight, Receipt, Activity, TrendingUp, PiggyBank, CreditCard, ShoppingBag, Settings, LogOut } from "lucide-react";
 import { supabase } from "./lib/supabaseClient";
 import DashboardPage from "./pages/DashboardPage";
 import MovimentacoesPage from "./pages/MovimentacoesPage";
@@ -7,6 +7,8 @@ import GastosPage from "./pages/GastosPage";
 import SaudeFinanceiraPage from "./pages/SaudeFinanceiraPage";
 import InvestimentosPage from "./pages/InvestimentosPage";
 import ReservaPage from "./pages/ReservaPage";
+import ParcelamentosPage from "./pages/ParcelamentosPage";
+import ListaComprasPage from "./pages/ListaComprasPage";
 import ConfiguracoesPage from "./pages/ConfiguracoesPage";
 
 const NAV_ITEMS = [
@@ -16,6 +18,8 @@ const NAV_ITEMS = [
   { id: "gastos", label: "Gastos", icon: Receipt },
   { id: "investimentos", label: "Investimentos", icon: TrendingUp },
   { id: "reserva", label: "Reserva", icon: PiggyBank },
+  { id: "parcelamentos", label: "Parcelamentos", icon: CreditCard },
+  { id: "compras", label: "Lista de Compras", icon: ShoppingBag },
   { id: "configuracoes", label: "Configurações", icon: Settings },
 ];
 
@@ -29,6 +33,8 @@ export default function Layout({ session }) {
   const [investmentTypes, setInvestmentTypes] = useState([]);
   const [reserveMovements, setReserveMovements] = useState([]);
   const [settings, setSettings] = useState({ reserve_goal: 0 });
+  const [installmentPlans, setInstallmentPlans] = useState([]);
+  const [shoppingList, setShoppingList] = useState([]);
 
   useEffect(() => {
     loadAll();
@@ -36,7 +42,7 @@ export default function Layout({ session }) {
 
   async function loadAll() {
     setLoading(true);
-    const [tx, cats, pms, inv, invTypes, res, sett] = await Promise.all([
+    const [tx, cats, pms, inv, invTypes, res, sett, plans, shop] = await Promise.all([
       supabase.from("transactions").select("*").order("date", { ascending: false }),
       supabase.from("categories").select("*").order("name"),
       supabase.from("payment_methods").select("*").order("name"),
@@ -44,6 +50,8 @@ export default function Layout({ session }) {
       supabase.from("investment_types").select("*").order("name"),
       supabase.from("reserve_movements").select("*").order("date", { ascending: false }),
       supabase.from("user_settings").select("*").eq("user_id", session.user.id).single(),
+      supabase.from("installment_plans").select("*").order("first_date", { ascending: false }),
+      supabase.from("shopping_list").select("*").order("created_at", { ascending: false }),
     ]);
     setTransactions(tx.data || []);
     setCategories(cats.data || []);
@@ -52,11 +60,14 @@ export default function Layout({ session }) {
     setInvestmentTypes(invTypes.data || []);
     setReserveMovements(res.data || []);
     setSettings(sett.data || { reserve_goal: 0 });
+    setInstallmentPlans(plans.data || []);
+    setShoppingList(shop.data || []);
     setLoading(false);
   }
 
   const pageProps = {
     session, transactions, categories, paymentMethods, investments, investmentTypes, reserveMovements, settings,
+    installmentPlans, shoppingList,
     reloadTransactions: async () => {
       const { data } = await supabase.from("transactions").select("*").order("date", { ascending: false });
       setTransactions(data || []);
@@ -84,6 +95,14 @@ export default function Layout({ session }) {
     reloadSettings: async () => {
       const { data } = await supabase.from("user_settings").select("*").eq("user_id", session.user.id).single();
       setSettings(data || { reserve_goal: 0 });
+    },
+    reloadInstallmentPlans: async () => {
+      const { data } = await supabase.from("installment_plans").select("*").order("first_date", { ascending: false });
+      setInstallmentPlans(data || []);
+    },
+    reloadShoppingList: async () => {
+      const { data } = await supabase.from("shopping_list").select("*").order("created_at", { ascending: false });
+      setShoppingList(data || []);
     },
   };
 
@@ -128,6 +147,10 @@ export default function Layout({ session }) {
           <InvestimentosPage {...pageProps} />
         ) : activePage === "reserva" ? (
           <ReservaPage {...pageProps} />
+        ) : activePage === "parcelamentos" ? (
+          <ParcelamentosPage {...pageProps} />
+        ) : activePage === "compras" ? (
+          <ListaComprasPage {...pageProps} />
         ) : activePage === "configuracoes" ? (
           <ConfiguracoesPage {...pageProps} />
         ) : null}
