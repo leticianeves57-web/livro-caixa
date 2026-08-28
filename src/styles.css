@@ -143,6 +143,22 @@ body { margin: 0; font-family: 'IBM Plex Sans', sans-serif; background: var(--pa
 .quick-btn.expense { background: var(--bad); }
 .quick-btn.income { background: var(--ok); }
 
+/* Atalhos rápidos do Dashboard */
+.quick-actions { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 20px; }
+.quick-action {
+  display: flex; flex-direction: column; align-items: center; gap: 6px;
+  border: 1px solid var(--line); background: var(--paper-raised); border-radius: 10px;
+  padding: 14px 8px; font-size: 12px; font-weight: 500; cursor: pointer; color: var(--text);
+}
+.quick-action:active { transform: scale(0.97); }
+.quick-action.expense { color: var(--bad); }
+.quick-action.expense svg { color: var(--bad); }
+.quick-action.income { color: var(--ok); }
+.quick-action.income svg { color: var(--ok); }
+.quick-action.invest { color: var(--invest); }
+.quick-action.invest svg { color: var(--invest); }
+.quick-action.neutral svg { color: var(--muted); }
+
 .list { margin-bottom: 12px; }
 .list-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px dotted var(--line); font-size: 13.5px; }
 .list-row:last-child { border-bottom: none; }
@@ -193,6 +209,7 @@ body { margin: 0; font-family: 'IBM Plex Sans', sans-serif; background: var(--pa
   .shell-sidebar { display: none; }
   .shell-main { padding: 18px 16px 90px 16px; max-width: 100%; }
   .mini-cards { grid-template-columns: 1fr; }
+  .quick-actions { grid-template-columns: 1fr 1fr; }
   .field-row { grid-template-columns: 1fr; }
   .quick-buttons { grid-template-columns: 1fr; }
   .health-card { flex-direction: column; text-align: center; }
@@ -205,4 +222,17 @@ body { margin: 0; font-family: 'IBM Plex Sans', sans-serif; background: var(--pa
   }
   .shell-bottomnav button { background: none; border: none; color: rgba(241,239,228,0.6); display: flex; flex-direction: column; align-items: center; gap: 3px; font-size: 9.5px; padding: 4px; flex: 1; }
   .shell-bottomnav button.active { color: var(--paper-raised); }
+  .more-overlay { position: fixed; inset: 0; background: rgba(22,36,31,0.45); z-index: 60; display: flex; align-items: flex-end; }
+  .more-sheet {
+    background: var(--paper-raised); width: 100%; border-radius: 16px 16px 0 0;
+    padding: 10px 10px calc(24px + env(safe-area-inset-bottom, 0px)) 10px;
+    display: flex; flex-direction: column; gap: 2px; max-height: 72vh; overflow-y: auto;
+  }
+  .more-handle { width: 36px; height: 4px; background: var(--line); border-radius: 4px; margin: 4px auto 12px auto; }
+  .more-item {
+    display: flex; align-items: center; gap: 12px; width: 100%; background: none; border: none;
+    padding: 13px 12px; font-size: 14.5px; color: var(--text); border-radius: 8px; text-align: left;
+  }
+  .more-item:active { background: var(--paper); }
+  .more-divider { height: 1px; background: var(--line); margin: 8px 4px; }
 }
