@@ -188,7 +188,6 @@ body { margin: 0; font-family: 'IBM Plex Sans', sans-serif; background: var(--pa
 .alert-row.tone-atencao svg { color: var(--warn); }
 .alert-row.tone-info svg { color: var(--muted); }
 .alert-row.tone-positivo svg { color: var(--ok); }
-
 @media (max-width: 760px) {
   .shell-sidebar { display: none; }
   .shell-main { padding: 18px 16px 90px 16px; max-width: 100%; }
@@ -198,6 +197,7 @@ body { margin: 0; font-family: 'IBM Plex Sans', sans-serif; background: var(--pa
   .health-card { flex-direction: column; text-align: center; }
   .factors-grid { grid-template-columns: 1fr; }
   .class-grid { grid-template-columns: 1fr 1fr; }
+  .mini-cards[style] { grid-template-columns: 1fr 1fr !important; }
   .shell-bottomnav {
     display: flex; position: fixed; bottom: 0; left: 0; right: 0; background: var(--ink);
     padding: 8px 4px calc(8px + env(safe-area-inset-bottom, 0px)) 4px; justify-content: space-around; z-index: 40;

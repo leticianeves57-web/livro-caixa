@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
-import { LayoutDashboard, ArrowLeftRight, Receipt, Activity, Settings, LogOut } from "lucide-react";
+import { LayoutDashboard, ArrowLeftRight, Receipt, Activity, TrendingUp, PiggyBank, Settings, LogOut } from "lucide-react";
 import { supabase } from "./lib/supabaseClient";
 import DashboardPage from "./pages/DashboardPage";
 import MovimentacoesPage from "./pages/MovimentacoesPage";
 import GastosPage from "./pages/GastosPage";
 import SaudeFinanceiraPage from "./pages/SaudeFinanceiraPage";
+import InvestimentosPage from "./pages/InvestimentosPage";
+import ReservaPage from "./pages/ReservaPage";
 import ConfiguracoesPage from "./pages/ConfiguracoesPage";
 
 const NAV_ITEMS = [
@@ -12,6 +14,8 @@ const NAV_ITEMS = [
   { id: "saude", label: "Saúde Financeira", icon: Activity },
   { id: "movimentacoes", label: "Movimentações", icon: ArrowLeftRight },
   { id: "gastos", label: "Gastos", icon: Receipt },
+  { id: "investimentos", label: "Investimentos", icon: TrendingUp },
+  { id: "reserva", label: "Reserva", icon: PiggyBank },
   { id: "configuracoes", label: "Configurações", icon: Settings },
 ];
 
@@ -21,6 +25,10 @@ export default function Layout({ session }) {
   const [transactions, setTransactions] = useState([]);
   const [categories, setCategories] = useState([]);
   const [paymentMethods, setPaymentMethods] = useState([]);
+  const [investments, setInvestments] = useState([]);
+  const [investmentTypes, setInvestmentTypes] = useState([]);
+  const [reserveMovements, setReserveMovements] = useState([]);
+  const [settings, setSettings] = useState({ reserve_goal: 0 });
 
   useEffect(() => {
     loadAll();
@@ -28,19 +36,27 @@ export default function Layout({ session }) {
 
   async function loadAll() {
     setLoading(true);
-    const [tx, cats, pms] = await Promise.all([
+    const [tx, cats, pms, inv, invTypes, res, sett] = await Promise.all([
       supabase.from("transactions").select("*").order("date", { ascending: false }),
       supabase.from("categories").select("*").order("name"),
       supabase.from("payment_methods").select("*").order("name"),
+      supabase.from("investment_movements").select("*").order("date", { ascending: false }),
+      supabase.from("investment_types").select("*").order("name"),
+      supabase.from("reserve_movements").select("*").order("date", { ascending: false }),
+      supabase.from("user_settings").select("*").eq("user_id", session.user.id).single(),
     ]);
     setTransactions(tx.data || []);
     setCategories(cats.data || []);
     setPaymentMethods(pms.data || []);
+    setInvestments(inv.data || []);
+    setInvestmentTypes(invTypes.data || []);
+    setReserveMovements(res.data || []);
+    setSettings(sett.data || { reserve_goal: 0 });
     setLoading(false);
   }
 
   const pageProps = {
-    session, transactions, categories, paymentMethods,
+    session, transactions, categories, paymentMethods, investments, investmentTypes, reserveMovements, settings,
     reloadTransactions: async () => {
       const { data } = await supabase.from("transactions").select("*").order("date", { ascending: false });
       setTransactions(data || []);
@@ -52,6 +68,22 @@ export default function Layout({ session }) {
     reloadPaymentMethods: async () => {
       const { data } = await supabase.from("payment_methods").select("*").order("name");
       setPaymentMethods(data || []);
+    },
+    reloadInvestments: async () => {
+      const { data } = await supabase.from("investment_movements").select("*").order("date", { ascending: false });
+      setInvestments(data || []);
+    },
+    reloadInvestmentTypes: async () => {
+      const { data } = await supabase.from("investment_types").select("*").order("name");
+      setInvestmentTypes(data || []);
+    },
+    reloadReserve: async () => {
+      const { data } = await supabase.from("reserve_movements").select("*").order("date", { ascending: false });
+      setReserveMovements(data || []);
+    },
+    reloadSettings: async () => {
+      const { data } = await supabase.from("user_settings").select("*").eq("user_id", session.user.id).single();
+      setSettings(data || { reserve_goal: 0 });
     },
   };
 
@@ -92,6 +124,10 @@ export default function Layout({ session }) {
           <MovimentacoesPage {...pageProps} />
         ) : activePage === "gastos" ? (
           <GastosPage {...pageProps} />
+        ) : activePage === "investimentos" ? (
+          <InvestimentosPage {...pageProps} />
+        ) : activePage === "reserva" ? (
+          <ReservaPage {...pageProps} />
         ) : activePage === "configuracoes" ? (
           <ConfiguracoesPage {...pageProps} />
         ) : null}

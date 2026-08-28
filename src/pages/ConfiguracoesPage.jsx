@@ -75,12 +75,13 @@ function ListSection({ title, table, items, reload, placeholder }) {
   );
 }
 
-export default function ConfiguracoesPage({ categories, paymentMethods, reloadCategories, reloadPaymentMethods }) {
+export default function ConfiguracoesPage({ categories, paymentMethods, investmentTypes, reloadCategories, reloadPaymentMethods, reloadInvestmentTypes }) {
   return (
     <>
       <h1 className="page-title">Configurações</h1>
       <ListSection title="Categorias" table="categories" items={categories} reload={reloadCategories} placeholder="Nova categoria" />
       <ListSection title="Formas de pagamento" table="payment_methods" items={paymentMethods} reload={reloadPaymentMethods} placeholder="Nova forma de pagamento" />
+      <ListSection title="Tipos de investimento" table="investment_types" items={investmentTypes} reload={reloadInvestmentTypes} placeholder="Novo tipo de investimento" />
     </>
   );
 }
