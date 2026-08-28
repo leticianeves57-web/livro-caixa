@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import "./styles.css";
 import { supabase } from "./lib/supabaseClient";
 import Auth from "./Auth";
-import Dashboard from "./Dashboard";
+import Layout from "./Layout";
 
 export default function App() {
   const [session, setSession] = useState(null);
@@ -25,5 +25,5 @@ export default function App() {
     return <div className="auth-wrap"><p style={{ color: "var(--muted)" }}>Carregando…</p></div>;
   }
 
-  return session ? <Dashboard session={session} /> : <Auth />;
+  return session ? <Layout session={session} /> : <Auth />;
 }
