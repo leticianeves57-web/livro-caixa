@@ -1,7 +1,9 @@
 import { useState } from "react";
 import { X } from "lucide-react";
 import { supabase } from "../lib/supabaseClient";
-import { todayStr } from "../lib/utils";
+import { addMonths, todayStr } from "../lib/utils";
+
+const GERACAO_MESES_ADIANTE = 24;
 
 export default function TransactionForm({ categories, paymentMethods, initialData, defaultType, onClose, onSaved }) {
   const editMode = !!initialData;
@@ -15,6 +17,8 @@ export default function TransactionForm({ categories, paymentMethods, initialDat
   const [classification, setClassification] = useState(initialData?.classification || "essencial");
   const [paid, setPaid] = useState(initialData ? initialData.paid !== false : true);
   const [note, setNote] = useState(initialData?.note || "");
+  const [repeticao, setRepeticao] = useState("nenhuma");
+  const [endDate, setEndDate] = useState("");
   const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
 
@@ -25,8 +29,38 @@ export default function TransactionForm({ categories, paymentMethods, initialDat
     const val = parseFloat(String(amount).replace(",", "."));
     if (!amount || Number.isNaN(val) || val <= 0) { setError("Informe um valor válido, maior que zero."); return; }
     if (!date) { setError("Escolha uma data."); return; }
+    if (repeticao === "recorrente" && endDate && endDate < date) { setError("A data de término não pode ser antes da data de início."); return; }
 
     setSaving(true);
+
+    if (!editMode && repeticao === "recorrente") {
+      const { data: serie, error: serieErr } = await supabase.from("series").insert({
+        description: description.trim(), amount: val, category, type,
+        payment_method: paymentMethod, classification: type === "saida" ? classification : null,
+        start_date: date, end_date: endDate || null, status: "ativa",
+      }).select().single();
+      if (serieErr) { setSaving(false); setError(serieErr.message); return; }
+
+      const limite = endDate && endDate < addMonths(date, GERACAO_MESES_ADIANTE) ? endDate : addMonths(date, GERACAO_MESES_ADIANTE);
+      const rows = [];
+      let i = 0;
+      while (true) {
+        const d = addMonths(date, i);
+        if (d > limite) break;
+        rows.push({
+          type, description: description.trim(), category, amount: val, date: d,
+          payment_method: paymentMethod, fixed: true, paid: i === 0 ? paid : false, note: note.trim(),
+          classification: type === "saida" ? classification : null, series_id: serie.id,
+        });
+        i++;
+      }
+      const { error: txErr } = await supabase.from("transactions").insert(rows);
+      setSaving(false);
+      if (txErr) { setError(txErr.message); return; }
+      onSaved();
+      return;
+    }
+
     const payload = {
       type, description: description.trim(), category, amount: val, date,
       payment_method: paymentMethod, fixed, paid, note: note.trim(),
@@ -107,6 +141,26 @@ export default function TransactionForm({ categories, paymentMethods, initialDat
             <label>Observação (opcional)</label>
             <input value={note} onChange={(e) => setNote(e.target.value)} />
           </div>
+
+          {!editMode && (
+            <>
+              <div className="field">
+                <label>Repetição</label>
+                <select value={repeticao} onChange={(e) => setRepeticao(e.target.value)}>
+                  <option value="nenhuma">Lançamento único</option>
+                  <option value="recorrente">Recorrente (todo mês)</option>
+                </select>
+              </div>
+              {repeticao === "recorrente" && (
+                <div className="field">
+                  <label>Data de término (opcional)</label>
+                  <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
+                  <p style={{ fontSize: 11, color: "var(--muted)", margin: "5px 0 0 0" }}>Deixe em branco para gerar sem data final definida.</p>
+                </div>
+              )}
+            </>
+          )}
+
           {error && <p className="form-error">{error}</p>}
           <button className="btn-primary" type="submit" disabled={saving}>
             {saving ? "Salvando…" : editMode ? "Salvar alterações" : "Salvar lançamento"}
@@ -116,3 +170,4 @@ export default function TransactionForm({ categories, paymentMethods, initialDat
     </div>
   );
 }
+
