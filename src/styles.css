@@ -224,6 +224,17 @@ body { margin: 0; font-family: 'IBM Plex Sans', sans-serif; background: var(--pa
 
 /* ---- Menu mobile: barra superior + gaveta lateral ---- */
 .mobile-topbar { display: none; }
+.hamburger-btn { background: none; border: none; color: var(--paper-raised); cursor: pointer; display: flex; padding: 2px; }
+
+/* posicionamento da gaveta — vale em qualquer tamanho de tela, pra nunca ficar "solta" no meio do conteúdo */
+.drawer-overlay { position: fixed; inset: 0; background: rgba(22,36,31,0.5); z-index: 60; }
+.drawer {
+  position: fixed; top: 0; left: 0; bottom: 0; width: 78%; max-width: 280px;
+  background: var(--ink); z-index: 61; padding: 20px 16px; display: flex; flex-direction: column;
+  box-shadow: 4px 0 20px rgba(0,0,0,0.25); overflow-y: auto;
+}
+.drawer-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; padding-bottom: 14px; border-bottom: 1px solid rgba(241,239,228,0.15); }
+
 @media (max-width: 760px) {
   .shell-sidebar { display: none; }
   .shell-main { padding: 18px 16px 32px 16px; max-width: 100%; }
@@ -241,14 +252,4 @@ body { margin: 0; font-family: 'IBM Plex Sans', sans-serif; background: var(--pa
     background: var(--ink); color: var(--paper-raised); padding: 14px 16px;
   }
   .mobile-topbar-brand { font-family: 'Fraunces', serif; font-size: 15px; }
-  .hamburger-btn { background: none; border: none; color: var(--paper-raised); cursor: pointer; display: flex; padding: 2px; }
-
-  .drawer-overlay { position: fixed; inset: 0; background: rgba(22,36,31,0.5); z-index: 60; }
-  .drawer {
-    position: fixed; top: 0; left: 0; bottom: 0; width: 78%; max-width: 280px;
-    background: var(--ink); z-index: 61; padding: 20px 16px; display: flex; flex-direction: column;
-    box-shadow: 4px 0 20px rgba(0,0,0,0.25);
-  }
-  .drawer-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; padding-bottom: 14px; border-bottom: 1px solid rgba(241,239,228,0.15); }
 }
-
