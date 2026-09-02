@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { LayoutDashboard, ArrowLeftRight, Receipt, Activity, TrendingUp, PiggyBank, CreditCard, ShoppingBag, Settings, LogOut, MoreHorizontal } from "lucide-react";
+import { LayoutDashboard, ArrowLeftRight, Receipt, Activity, TrendingUp, PiggyBank, CreditCard, ShoppingBag, CalendarRange, Settings, LogOut, Menu, X } from "lucide-react";
 import { supabase } from "./lib/supabaseClient";
 import DashboardPage from "./pages/DashboardPage";
 import MovimentacoesPage from "./pages/MovimentacoesPage";
@@ -9,6 +9,7 @@ import InvestimentosPage from "./pages/InvestimentosPage";
 import ReservaPage from "./pages/ReservaPage";
 import ParcelamentosPage from "./pages/ParcelamentosPage";
 import ListaComprasPage from "./pages/ListaComprasPage";
+import ProjecaoPage from "./pages/ProjecaoPage";
 import ConfiguracoesPage from "./pages/ConfiguracoesPage";
 
 const NAV_ITEMS = [
@@ -16,6 +17,7 @@ const NAV_ITEMS = [
   { id: "saude", label: "Saúde Financeira", icon: Activity },
   { id: "movimentacoes", label: "Movimentações", icon: ArrowLeftRight },
   { id: "gastos", label: "Gastos", icon: Receipt },
+  { id: "projecao", label: "Projeção", icon: CalendarRange },
   { id: "investimentos", label: "Investimentos", icon: TrendingUp },
   { id: "reserva", label: "Reserva", icon: PiggyBank },
   { id: "parcelamentos", label: "Parcelamentos", icon: CreditCard },
@@ -25,7 +27,7 @@ const NAV_ITEMS = [
 
 export default function Layout({ session }) {
   const [activePage, setActivePage] = useState("dashboard");
-  const [showMore, setShowMore] = useState(false);
+  const [showDrawer, setShowDrawer] = useState(false);
   const [loading, setLoading] = useState(true);
   const [transactions, setTransactions] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -109,6 +111,13 @@ export default function Layout({ session }) {
 
   return (
     <div className="shell">
+      <div className="mobile-topbar">
+        <button className="hamburger-btn" onClick={() => setShowDrawer(true)} aria-label="Abrir menu">
+          <Menu size={20} />
+        </button>
+        <span className="mobile-topbar-brand">Sistema Financeiro</span>
+      </div>
+
       <aside className="shell-sidebar">
         <div className="shell-brand">Sistema Financeiro</div>
         <nav className="shell-nav">
@@ -133,6 +142,37 @@ export default function Layout({ session }) {
         </div>
       </aside>
 
+      {showDrawer && (
+        <div className="drawer-overlay" onClick={() => setShowDrawer(false)}>
+          <aside className="drawer" onClick={(e) => e.stopPropagation()}>
+            <div className="drawer-head">
+              <span className="shell-brand" style={{ padding: 0, border: "none", margin: 0 }}>Sistema Financeiro</span>
+              <button className="hamburger-btn" onClick={() => setShowDrawer(false)} aria-label="Fechar menu"><X size={20} /></button>
+            </div>
+            <nav className="shell-nav">
+              {NAV_ITEMS.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <button
+                    key={item.id}
+                    className={`shell-nav-item ${activePage === item.id ? "active" : ""}`}
+                    onClick={() => { setActivePage(item.id); setShowDrawer(false); }}
+                  >
+                    <Icon size={16} /> {item.label}
+                  </button>
+                );
+              })}
+            </nav>
+            <div className="shell-user">
+              <span>{session.user.email}</span>
+              <button className="btn-logout" onClick={() => supabase.auth.signOut()}>
+                <LogOut size={13} style={{ marginRight: 5, verticalAlign: -2 }} /> Sair
+              </button>
+            </div>
+          </aside>
+        </div>
+      )}
+
       <main className="shell-main">
         {loading ? (
           <p className="empty-note">Carregando…</p>
@@ -144,6 +184,8 @@ export default function Layout({ session }) {
           <MovimentacoesPage {...pageProps} />
         ) : activePage === "gastos" ? (
           <GastosPage {...pageProps} />
+        ) : activePage === "projecao" ? (
+          <ProjecaoPage {...pageProps} />
         ) : activePage === "investimentos" ? (
           <InvestimentosPage {...pageProps} />
         ) : activePage === "reserva" ? (
@@ -156,42 +198,6 @@ export default function Layout({ session }) {
           <ConfiguracoesPage {...pageProps} />
         ) : null}
       </main>
-
-      <nav className="shell-bottomnav">
-        {NAV_ITEMS.slice(0, 4).map((item) => {
-          const Icon = item.icon;
-          return (
-            <button key={item.id} className={activePage === item.id ? "active" : ""} onClick={() => { setActivePage(item.id); setShowMore(false); }}>
-              <Icon size={18} />
-              <span>{item.label.split(" ")[0]}</span>
-            </button>
-          );
-        })}
-        <button className={showMore ? "active" : ""} onClick={() => setShowMore(true)}>
-          <MoreHorizontal size={18} />
-          <span>Mais</span>
-        </button>
-      </nav>
-
-      {showMore && (
-        <div className="more-overlay" onClick={() => setShowMore(false)}>
-          <div className="more-sheet" onClick={(e) => e.stopPropagation()}>
-            <div className="more-handle" />
-            {NAV_ITEMS.slice(4).map((item) => {
-              const Icon = item.icon;
-              return (
-                <button key={item.id} className="more-item" onClick={() => { setActivePage(item.id); setShowMore(false); }}>
-                  <Icon size={17} /> {item.label}
-                </button>
-              );
-            })}
-            <div className="more-divider" />
-            <button className="more-item" onClick={() => supabase.auth.signOut()}>
-              <LogOut size={17} /> Sair
-            </button>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
