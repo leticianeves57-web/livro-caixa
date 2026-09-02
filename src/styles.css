@@ -205,9 +205,28 @@ body { margin: 0; font-family: 'IBM Plex Sans', sans-serif; background: var(--pa
 .alert-row.tone-info svg { color: var(--muted); }
 .alert-row.tone-positivo svg { color: var(--ok); }
 .status-select { font-size: 10px; text-transform: uppercase; border: 1px solid var(--line); border-radius: 20px; padding: 2px 8px; background: #fff; cursor: pointer; }
+
+/* ---- Projeção ---- */
+.proj-row { margin-bottom: 12px; }
+.proj-row.proj-current { border-color: var(--ink); border-width: 1.5px; }
+.proj-head { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
+.proj-tag { display: inline-block; font-size: 10px; text-transform: uppercase; letter-spacing: 0.03em; color: var(--muted); border: 1px solid var(--line); border-radius: 20px; padding: 2px 8px; margin-top: 4px; }
+.proj-sobra { display: flex; align-items: center; gap: 6px; font-size: 18px; font-weight: 600; }
+.proj-sobra.pos { color: var(--ok); }
+.proj-sobra.neg { color: var(--bad); }
+.proj-details { display: flex; gap: 18px; font-size: 12.5px; color: var(--muted); flex-wrap: wrap; margin-bottom: 8px; }
+.proj-details b { color: var(--text); font-weight: 500; }
+.proj-details b.pos { color: var(--ok); }
+.proj-details b.neg { color: var(--bad); }
+.proj-acumulado { font-size: 12px; color: var(--muted); border-top: 1px dotted var(--line); padding-top: 8px; }
+.proj-acumulado b.pos { color: var(--ok); }
+.proj-acumulado b.neg { color: var(--bad); }
+
+/* ---- Menu mobile: barra superior + gaveta lateral ---- */
+.mobile-topbar { display: none; }
 @media (max-width: 760px) {
   .shell-sidebar { display: none; }
-  .shell-main { padding: 18px 16px 90px 16px; max-width: 100%; }
+  .shell-main { padding: 18px 16px 32px 16px; max-width: 100%; }
   .mini-cards { grid-template-columns: 1fr; }
   .quick-actions { grid-template-columns: 1fr 1fr; }
   .field-row { grid-template-columns: 1fr; }
@@ -216,23 +235,20 @@ body { margin: 0; font-family: 'IBM Plex Sans', sans-serif; background: var(--pa
   .factors-grid { grid-template-columns: 1fr; }
   .class-grid { grid-template-columns: 1fr 1fr; }
   .mini-cards[style] { grid-template-columns: 1fr 1fr !important; }
-  .shell-bottomnav {
-    display: flex; position: fixed; bottom: 0; left: 0; right: 0; background: var(--ink);
-    padding: 8px 4px calc(8px + env(safe-area-inset-bottom, 0px)) 4px; justify-content: space-around; z-index: 40;
+
+  .mobile-topbar {
+    display: flex; align-items: center; gap: 12px; position: sticky; top: 0; z-index: 30;
+    background: var(--ink); color: var(--paper-raised); padding: 14px 16px;
   }
-  .shell-bottomnav button { background: none; border: none; color: rgba(241,239,228,0.6); display: flex; flex-direction: column; align-items: center; gap: 3px; font-size: 9.5px; padding: 4px; flex: 1; }
-  .shell-bottomnav button.active { color: var(--paper-raised); }
-  .more-overlay { position: fixed; inset: 0; background: rgba(22,36,31,0.45); z-index: 60; display: flex; align-items: flex-end; }
-  .more-sheet {
-    background: var(--paper-raised); width: 100%; border-radius: 16px 16px 0 0;
-    padding: 10px 10px calc(24px + env(safe-area-inset-bottom, 0px)) 10px;
-    display: flex; flex-direction: column; gap: 2px; max-height: 72vh; overflow-y: auto;
+  .mobile-topbar-brand { font-family: 'Fraunces', serif; font-size: 15px; }
+  .hamburger-btn { background: none; border: none; color: var(--paper-raised); cursor: pointer; display: flex; padding: 2px; }
+
+  .drawer-overlay { position: fixed; inset: 0; background: rgba(22,36,31,0.5); z-index: 60; }
+  .drawer {
+    position: fixed; top: 0; left: 0; bottom: 0; width: 78%; max-width: 280px;
+    background: var(--ink); z-index: 61; padding: 20px 16px; display: flex; flex-direction: column;
+    box-shadow: 4px 0 20px rgba(0,0,0,0.25);
   }
-  .more-handle { width: 36px; height: 4px; background: var(--line); border-radius: 4px; margin: 4px auto 12px auto; }
-  .more-item {
-    display: flex; align-items: center; gap: 12px; width: 100%; background: none; border: none;
-    padding: 13px 12px; font-size: 14.5px; color: var(--text); border-radius: 8px; text-align: left;
-  }
-  .more-item:active { background: var(--paper); }
-  .more-divider { height: 1px; background: var(--line); margin: 8px 4px; }
+  .drawer-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; padding-bottom: 14px; border-bottom: 1px solid rgba(241,239,228,0.15); }
 }
+
