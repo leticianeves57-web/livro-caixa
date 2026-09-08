@@ -236,6 +236,7 @@ body { margin: 0; font-family: 'IBM Plex Sans', sans-serif; background: var(--pa
 .drawer-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; padding-bottom: 14px; border-bottom: 1px solid rgba(241,239,228,0.15); }
 
 @media (max-width: 760px) {
+  .shell { flex-direction: column; }
   .shell-sidebar { display: none; }
   .shell-main { padding: 18px 16px 32px 16px; max-width: 100%; }
   .mini-cards { grid-template-columns: 1fr; }
